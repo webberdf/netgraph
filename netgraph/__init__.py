@@ -106,6 +106,7 @@ from ._main import (
     BaseGraph,
     Graph,
     InteractiveGraph,
+    EmphasizeOnClickGraph
 )
 
 from ._node_layout import (
@@ -162,6 +163,7 @@ __all__ = [
     'Basegraph',
     'Graph',
     'InteractiveGraph',
+    'EmphasizeOnClickGraph',
     'MutableGraph',
     'EditableGraph',
     'parse_graph',
