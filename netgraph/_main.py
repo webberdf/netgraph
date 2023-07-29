@@ -2248,17 +2248,17 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
 
     def _on_release(self, event):
 
-        if event.inaxes == self.ax:
+        # first clear existing deemphasis
+        if self.deemphasized_artists:
+            for artist in self.deemphasized_artists:
+                try:
+                    artist.set_alpha(self._base_alpha[artist])
+                except KeyError:
+                    # This mitigates issue #66.
+                    pass
+            self.deemphasized_artists = []
 
-            # first clear existing deemphasis
-            if self.deemphasized_artists:
-                for artist in self.deemphasized_artists:
-                    try:
-                        artist.set_alpha(self._base_alpha[artist])
-                    except KeyError:
-                        # This mitigates issue #66.
-                        pass
-                self.deemphasized_artists = []
+        if event.inaxes == self.ax:
 
             # determine if the cursor is on an artist
             selected_artist = None
@@ -2282,7 +2282,7 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
                             artist.set_alpha(self._base_alpha[artist]/5)
                             self.deemphasized_artists.append(artist)
 
-            self.fig.canvas.draw_idle()
+        self.fig.canvas.draw_idle()
 
 
 class AnnotateOnClick(object):
