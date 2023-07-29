@@ -2145,8 +2145,8 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
 
         - networkx.Graph, igraph.Graph, or graph_tool.Graph object
 
-    mouseover_highlight_mapping : dict or None, default None
-        Determines which nodes and/or edges are highlighted when hovering over any given node or edge.
+    click_highlight_mapping : dict or None, default None
+        Determines which nodes and/or edges are highlighted when clicking on any given node or edge.
         The keys of the dictionary are node and/or edge IDs, while the values are iterables of node and/or edge IDs.
         If the parameter is None, a default dictionary is constructed, which maps
 
@@ -2175,7 +2175,7 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
 
     """
 
-    def __init__(self, graph, mouseover_highlight_mapping=None, *args, **kwargs):
+    def __init__(self, graph, click_highlight_mapping=None, *args, **kwargs):
         Graph.__init__(self, graph, *args, **kwargs)
 
         artists = list(self.node_artists.values()) + list(self.edge_artists.values())
@@ -2183,14 +2183,14 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
         self.artist_to_key = dict(zip(artists, keys))
         EmphasizeOnClick.__init__(self, artists)
 
-        if mouseover_highlight_mapping is None: # construct default mapping
-            self.mouseover_highlight_mapping = self._get_default_mouseover_highlight_mapping()
+        if click_highlight_mapping is None: # construct default mapping
+            self.click_highlight_mapping = self._get_default_click_highlight_mapping()
         else: # this includes empty mappings!
-            self._check_mouseover_highlight_mapping(mouseover_highlight_mapping)
-            self.mouseover_highlight_mapping = mouseover_highlight_mapping
+            self._check_click_highlight_mapping(click_highlight_mapping)
+            self.click_highlight_mapping = click_highlight_mapping
 
 
-    def _get_default_mouseover_highlight_mapping(self):
+    def _get_default_click_highlight_mapping(self):
         mapping = dict()
 
         # mapping for edges: source node, target node and the edge itself
@@ -2211,10 +2211,10 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
         return mapping
 
 
-    def _check_mouseover_highlight_mapping(self, mapping):
+    def _check_click_highlight_mapping(self, mapping):
 
         if not isinstance(mapping, dict):
-            raise TypeError(f"Parameter `mouseover_highlight_mapping` is a dictionary, not {type(mapping)}.")
+            raise TypeError(f"Parameter `click_highlight_mapping` is a dictionary, not {type(mapping)}.")
 
         invalid_keys = []
         for key in mapping:
@@ -2225,7 +2225,7 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
             else:
                 invalid_keys.append(key)
         if invalid_keys:
-            msg = "Parameter `mouseover_highlight_mapping` contains invalid keys:"
+            msg = "Parameter `click_highlight_mapping` contains invalid keys:"
             for key in invalid_keys:
                 msg += f"\n\t- {key}"
             raise ValueError(msg)
@@ -2240,7 +2240,7 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
                 else:
                     invalid_values.append(value)
         if invalid_values:
-            msg = "Parameter `mouseover_highlight_mapping` contains invalid values:"
+            msg = "Parameter `click_highlight_mapping` contains invalid values:"
             for value in set(invalid_values):
                 msg += f"\n\t- {value}"
             raise ValueError(msg)
@@ -2269,9 +2269,9 @@ class EmphasizeOnClickGraph(Graph, EmphasizeOnClick):
 
             if selected_artist:
                 key = self.artist_to_key[artist]
-                if key in self.mouseover_highlight_mapping:
+                if key in self.click_highlight_mapping:
                     emphasized_artists = []
-                    for value in self.mouseover_highlight_mapping[key]:
+                    for value in self.click_highlight_mapping[key]:
                         if value in self.node_artists:
                             emphasized_artists.append(self.node_artists[value])
                         elif value in self.edge_artists:
